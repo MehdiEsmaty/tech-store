@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}{{ category }} - فروشگاه فناوری{% endblock %}
+
+{% block content %}
+<div class="container" dir="rtl">
+    <h1 class="mb-4">{{ category }}</h1>
+    
+    <div class="row">
+        {% for product in products %}
+        <div class="col-md-3 mb-4">
+            <div class="card h-100">
+                <img src="{{ url_for('static', filename='images/products/' + product.image) }}" class="card-img-top" alt="{{ product.name }}">
+                <div class="card-body">
+                    <h5 class="card-title">{{ product.name }}</h5>
+                    <p class="card-text">
+                        {% if product.discount_price %}
+                        <span class="text-danger">{{ product.discount_price }} تومان</span>
+                        <span class="text-decoration-line-through text-muted">{{ product.price }} تومان</span>
+                        {% else %}
+                        {{ product.price }} تومان
+                        {% endif %}
+                    </p>
+                    <a href="{{ url_for('product_detail', product_id=product.id) }}" class="btn btn-primary">مشاهده جزئیات</a>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="col-12">
+            <div class="alert alert-info">
+                محصولی در این دسته‌بندی یافت نشد.
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %} 

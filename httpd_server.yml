@@ -1,0 +1,19 @@
+---
+- name: Install Apache on Ubuntu servers
+  hosts: appservers   # یا هر گروه سروری که در inventory شما وجود دارد
+  become: yes         # این اجازه می‌دهد که دستورها با دسترسی sudo اجرا شوند
+  tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+
+    - name: Install Apache2 package
+      apt:
+        name: apache2
+        state: present
+
+    - name: Ensure Apache is started and enabled at boot
+      systemd:
+        name: apache2
+        enabled: yes
+        state: started

@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block title %}سبد خرید - فروشگاه فناوری{% endblock %}
+
+{% block content %}
+<div class="container" dir="rtl">
+    <h1 class="mb-4">سبد خرید</h1>
+    
+    {% if session.cart %}
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>محصول</th>
+                                <th>قیمت</th>
+                                <th>تعداد</th>
+                                <th>جمع</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for product_id, quantity in session.cart.items() %}
+                            {% set product = Product.query.get(product_id) %}
+                            <tr>
+                                <td>
+                                    <img src="{{ url_for('static', filename='images/products/' + product.image) }}" 
+                                         alt="{{ product.name }}" 
+                                         style="width: 50px; height: 50px; object-fit: cover;">
+                                    {{ product.name }}
+                                </td>
+                                <td>{{ product.price }} تومان</td>
+                                <td>
+                                    <form action="{{ url_for('update_cart', product_id=product_id) }}" method="POST" class="d-inline">
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                        <input type="number" name="quantity" value="{{ quantity }}" min="1" max="{{ product.stock }}" 
+                                               class="form-control form-control-sm d-inline-block" style="width: 70px;">
+                                        <button type="submit" class="btn btn-sm btn-outline-primary">بروزرسانی</button>
+                                    </form>
+                                </td>
+                                <td>{{ product.price * quantity }} تومان</td>
+                                <td>
+                                    <form action="{{ url_for('remove_from_cart', product_id=product_id) }}" method="POST" class="d-inline">
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                        <button type="submit" class="btn btn-sm btn-danger">حذف</button>
+                                    </form>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">خلاصه سفارش</h5>
+                    <hr>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>جمع کل:</span>
+                        <span>{{ total_price }} تومان</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>مالیات:</span>
+                        <span>{{ tax }} تومان</span>
+                    </div>
+                    <hr>
+                    <div class="d-flex justify-content-between mb-3">
+                        <strong>مبلغ قابل پرداخت:</strong>
+                        <strong>{{ total_price + tax }} تومان</strong>
+                    </div>
+                    <a href="{{ url_for('checkout') }}" class="btn btn-primary w-100">پرداخت</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="alert alert-info">
+        سبد خرید شما خالی است.
+        <a href="{{ url_for('index') }}" class="alert-link">بازگشت به صفحه اصلی</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %} 
