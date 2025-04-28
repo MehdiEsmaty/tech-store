@@ -12,5 +12,21 @@ services:
       - FLASK_APP=app.py
       - FLASK_ENV=development
       - SECRET_KEY=your-secret-key
+      - AUTH_SERVICE_URL=http://auth:5000
+    depends_on:
+      - auth
+    command: python app.py
+    restart: unless-stopped
+
+  auth:
+    build: ./auth_service
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./auth_service:/app
+    environment:
+      - FLASK_APP=app.py
+      - FLASK_ENV=development
+      - SECRET_KEY=your-secret-key
     command: python app.py
     restart: unless-stopped 
