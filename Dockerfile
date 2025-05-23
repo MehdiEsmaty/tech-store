@@ -5,8 +5,8 @@ FROM python:3.8-slim
 WORKDIR /app
 
 # Set environment variables
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONUNBUFFERED 1
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
 
 # Install system dependencies
 RUN apt-get update \
@@ -21,7 +21,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 # Create necessary directories
-RUN mkdir -p static/images/products
+RUN mkdir -p static/images/products data
 
 # Run the application
-CMD ["python", "app.py"] 
+CMD ["sh", "-c", "python -c 'from app import db; db.create_all()' && python seed_data.py && python app.py"] 
